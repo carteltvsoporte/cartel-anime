@@ -8,16 +8,10 @@ const CONFIG = {
 };
 
 const AUTHORIZED_USERS = [
-  { name: "Marcos", phone: "50369270", password: "CTVP" },
-  { name: "naruto", phone: "2345678901", password: "hokage123" },
-  { name: "goku", phone: "3456789012", password: "kamehameha" },
-  { name: "luffy", phone: "4567890123", password: "onepiece" },
-  { name: "saitama", phone: "5678901234", password: "onepunch" },
-  { name: "levi", phone: "6789012345", password: "cleanfreak" },
-  { name: "nezuko", phone: "7890123456", password: "demonslayer" },
-  { name: "yor", phone: "8901234567", password: "assassin" },
-  { name: "gojo", phone: "9012345678", password: "infinity" },
-  { name: "mai", phone: "0123456789", password: "sakurajima" }
+  { name: "ms", phone: "50369270" },
+  { name: "naruto", phone: "2345678901" },
+  { name: "goku", phone: "3456789012" },
+  { name: "luffy", phone: "4567890123" },
 ];
 
 const State = {
@@ -42,50 +36,54 @@ function setupAccessModal() {
   const accessModal = document.getElementById('access-modal');
   const userNameInput = document.getElementById('user-name');
   const userPhoneInput = document.getElementById('user-phone');
-  const accessCodeInput = document.getElementById('access-code');
   const submitButton = document.getElementById('submit-code');
   const errorMessage = document.getElementById('error-message');
-  
-  const hasAccess = localStorage.getItem('anima_access_granted');
-  if (hasAccess === 'true') {
+
+  // Verificar si ya tiene acceso
+  if (localStorage.getItem('anima_access_granted') === 'true') {
     accessModal.classList.add('hidden');
     document.getElementById('main-app').classList.remove('hidden');
     return;
   }
-  
-  submitButton.addEventListener('click', () => {
-    const enteredName = userNameInput.value.trim().toLowerCase();
-    const enteredPhone = userPhoneInput.value.trim();
-    const enteredPassword = accessCodeInput.value.trim();
-    
-    const isValidUser = AUTHORIZED_USERS.some(user => 
-      user.name === enteredName && 
-      user.phone === enteredPhone && 
-      user.password === enteredPassword
+
+  function validateAccess() {
+    const name = userNameInput.value.trim().toLowerCase();
+    const phone = userPhoneInput.value.trim();
+
+    // Buscar usuario válido
+    const validUser = AUTHORIZED_USERS.find(user => 
+      user.name === name && 
+      user.phone === phone
     );
-    
-    if (isValidUser) {
+
+    if (validUser) {
+      // Acceso concedido
       localStorage.setItem('anima_access_granted', 'true');
-      localStorage.setItem('anima_current_user', enteredName);
+      localStorage.setItem('anima_current_user', name);
       accessModal.classList.add('hidden');
       document.getElementById('main-app').classList.remove('hidden');
-      showNotification(`¡Bienvenido/a ${enteredName} a TV ANIMA!`);
+      showNotification(`¡Bienvenido/a ${name} a TV ANIMA!`);
     } else {
+      // Credenciales incorrectas
       errorMessage.classList.remove('hidden');
       userNameInput.value = '';
       userPhoneInput.value = '';
-      accessCodeInput.value = '';
       userNameInput.focus();
     }
-  });
-  
-  [userNameInput, userPhoneInput, accessCodeInput].forEach(input => {
+  }
+
+  // Event listeners simplificados
+  submitButton.addEventListener('click', validateAccess);
+
+  // Permitir enviar con Enter en cualquier campo
+  [userNameInput, userPhoneInput].forEach(input => {
     input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        submitButton.click();
-      }
+      if (e.key === 'Enter') validateAccess();
     });
   });
+
+  // Enfocar el primer campo automáticamente
+  userNameInput.focus();
 }
 
 function setupTheme() {
