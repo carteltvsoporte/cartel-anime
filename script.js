@@ -8,7 +8,7 @@ const CONFIG = {
 };
 
 const AUTHORIZED_USERS = [
-  { name: "sakura", phone: "1234567890", password: "anime2025" },
+  { name: "Marcos", phone: "+5350369270", password: "TVANIMA" },
   { name: "naruto", phone: "2345678901", password: "hokage123" },
   { name: "goku", phone: "3456789012", password: "kamehameha" },
   { name: "luffy", phone: "4567890123", password: "onepiece" },
